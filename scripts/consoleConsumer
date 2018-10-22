@@ -1,0 +1,15 @@
+#!/bin/sh
+
+PROG=`basename $0`
+
+if [ $# != 1 ] ; then
+   echo  "	Usage: $PROG <topic>"
+   echo  "	Example: $PROG metricstats"
+   echo  "	Example: $PROG filebeats"
+   exit 1
+fi
+
+TOPIC=$1
+
+/opt/confluent/bin/kafka-console-consumer --bootstrap-server localhost:9092 --topic $TOPIC
+

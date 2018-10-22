@@ -1,0 +1,36 @@
+#!/bin/sh
+
+PROG=`basename $0`
+
+if [ $# != 1 ] ; then
+   echo  "Usage: $PROG [start|stop|status]"
+   exit 1
+fi
+mkdir -p /opt/confluent/logs/mirror/
+cd /opt/confluent/logs/mirror
+case $1 in
+   start)
+      nohup /opt/confluent/bin/kafka-mirror-maker --consumer.config /opt/confluent/scripts/source.config --num.streams 2 --producer.config /opt/confluent/scripts/target.config --whitelist=".*" &
+   ;;
+   stop)
+      STATUS=`jps | grep MirrorMaker`
+      if [ "$STATUS" = "" ] ; then
+         echo "MirrorMaker is stopped"
+      else 
+         kill $(jps | grep MirrorMaker | cut -d ' ' -f1)
+      fi
+   ;;
+   status)
+      STATUS=`jps | grep MirrorMaker`
+      if [ "$STATUS" = "" ] ; then
+	      echo "MirrorMaker is stopped"
+      else 
+	      echo $STATUS
+      fi
+   ;;
+   *)
+      echo  "Usage: $PROG [start|stop|status]"
+      exit 1
+      ;; 
+esac
+

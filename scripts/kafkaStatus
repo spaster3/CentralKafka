@@ -1,0 +1,13 @@
+#!/bin/sh
+
+BASE=/opt/confluent/scripts
+MirrorPid=$($BASE/doMirror status | cut -d ' ' -f1)
+
+ConnectorPid=$($BASE/startConnector status | cut -d ' ' -f1)
+
+KafkaPid=$(sudo jps | grep Supported | cut -d ' ' -f1)
+
+echo "Kafka = $KafkaPid"
+echo "Mirror =$MirrorPid"
+echo "Connector = $ConnectorPid"
+

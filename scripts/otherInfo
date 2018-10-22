@@ -1,0 +1,18 @@
+#!/bin/sh
+
+cd /opt/confluent
+# List consumer groups
+./bin/kafka-consumer-groups --bootstrap-server localhost:9092 --list 2>/dev/null
+
+# get Info on the 'test-consumer-group'
+./bin/kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group test-consumer-group 2>/dev/null | grep metricstats
+
+# get last five message from topic metricstats
+kafkacat -C -b localhost:9092 -t metricstats -p 0 -o -5 -e
+
+# get earlieast offset still in a topic
+./bin/kafka-run-class kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic metricstats --time -2
+
+# get latest offset still in a topic
+./bin/kafka-run-class kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic metricstats --time -1
+

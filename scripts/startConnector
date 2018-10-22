@@ -1,0 +1,34 @@
+#!/bin/sh
+BASE=/opt/confluent
+mkdir -p /opt/confluent/logs/connect/
+cd /opt/confluent/logs/connect/
+PID=`ps -elf | grep kafka | grep connect | awk '{ print $4 } '`
+case $1 in 
+   start)
+      if [ "$PID" != "" ] ; then
+         echo "$PID startConnetor is already active"
+      else 
+	      nohup $BASE/bin/connect-standalone $BASE/etc/kafka/connect-standalone.properties $BASE/etc/kafka-connect-elasticsearch/quickstart-elasticsearch.properties&
+      fi
+   ;;
+   stop)
+      if [ "$PID" != "" ] ; then
+         kill $PID
+         sleep 2
+         /opt/confluent/scripts/startConnector status
+      else
+         echo "startConnector not active"
+      fi
+   ;;
+   status)
+      if [ "$PID" != "" ] ; then
+         echo "$PID startConnector is active"
+      else
+         echo "startConnector is not active"
+      fi
+   ;;
+   *)
+      echo "Usage: startConnector [start | stop |  status]"
+   ;; 
+esac   
+	# nohup bin/connect-standalone etc/kafka/connect-standalone.properties etc/kafka-connect-elasticsearch/quickstart-elasticsearch.properties&
